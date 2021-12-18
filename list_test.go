@@ -16,6 +16,7 @@ func TestNumberGenerator(t *testing.T) {
 		for i := 0; i < 10; i++ {
 			var num Element
 			num, listOfNumbers = listOfNumbers()
+			require.NotNil(t, num)
 			require.Equal(t, num, Int(i))
 		}
 	})
@@ -106,6 +107,25 @@ func TestNumberGenerator(t *testing.T) {
 
 			knownPrimes = append(knownPrimes, int(prime.(Int)))
 
+		}
+	})
+
+	t.Run("Check lazyness", func(t *testing.T) {
+		// incremented each time a list element is evaluated
+		workCounter := 0
+
+		var g Generator = func(idx int) Element {
+			workCounter++
+			return Int(idx + 1)
+		}
+		listOfNumbers := NewLazyList(g) // Values [1, 2, 3, ...]
+
+		for i := 1; i < 10; i++ {
+			var num Element
+			num, listOfNumbers = listOfNumbers()
+			require.NotNil(t, num)
+			require.Equal(t, num, Int(i))
+			require.Equal(t, workCounter, i) // equals number of
 		}
 	})
 
