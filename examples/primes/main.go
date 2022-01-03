@@ -1,3 +1,4 @@
+// Primes prints a list of primes using lazy lists.
 package main
 
 import (
